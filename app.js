@@ -8,6 +8,7 @@ app.use(express.urlencoded({extended: true}));
 // routes
 require("./routes/movie.routes")(app);
 require("./routes/hall.routes")(app);
+require("./routes/schedule.routes")(app);
 
 
 app.listen(8080);
