@@ -1,4 +1,14 @@
 const Movie = require("../model/movie");
+const Joi = require("joi");
+
+// Validation schema
+const schema = Joi.object({
+    id: Joi.number().integer().min(1),
+    title: Joi.string().required(),
+    year: Joi.number().integer().min(1800).max(2023).required(),
+    genre: Joi.string().required(),
+    rating: Joi.number().min(0.0).max(5.0).required()
+});
 
 // Create and Save a new Movie
 exports.create = (req, res) => {
@@ -7,6 +17,17 @@ exports.create = (req, res) => {
         res.status(400).send({
             message: "Content can not be empty!"
         });
+    }
+
+    // Data validation
+    const {error} = schema.validate(req.body);
+
+    if (error) {
+        res.status(500).send({
+            message: error.message
+        });
+
+        return;
     }
 
     // Create a Movie
@@ -53,6 +74,19 @@ exports.update = (req, res) => {
         });
     }
 
+    // Data validation
+    const obj = req.body;
+    obj.id = req.params.id;
+    const {error} = schema.validate(obj);
+
+    if (error) {
+        res.status(500).send({
+            message: error.message
+        });
+
+        return;
+    }
+
     Movie.updateById(
         req.params.id,
         new Movie(req.body),
@@ -76,6 +110,17 @@ exports.update = (req, res) => {
 
 // Delete a Movie with the specified id in the request
 exports.delete = (req, res) => {
+    // Data validation
+    const {error} = schema.validate({ id: req.params.id });
+
+    if (error) {
+        res.status(500).send({
+            message: error.message
+        });
+
+        return;
+    }
+
     Movie.remove(req.params.id, (err, data) => {
         if (err) {
             if (err.kind === "not_found") {

@@ -1,4 +1,14 @@
 const Schedule = require("../model/schedule");
+const Joi = require("joi");
+
+// Validation schema
+const schema = Joi.object({
+    id: Joi.number().integer().min(1),
+    movieId: Joi.number().integer().min(1).required(),
+    dateTime: Joi.date().min("now").required(),
+    hallId: Joi.number().integer().min(1).required(),
+    price: Joi.number().min(0.0).required()
+});
 
 // Create and Save a new Schedule
 exports.create = (req, res) => {
@@ -7,6 +17,17 @@ exports.create = (req, res) => {
         res.status(400).send({
             message: "Content can not be empty!"
         });
+    }
+
+    // Data validation
+    const {error} = schema.validate(req.body);
+
+    if (error) {
+        res.status(500).send({
+            message: error.message
+        });
+
+        return;
     }
 
     // Create a Schedule
@@ -51,6 +72,19 @@ exports.update = (req, res) => {
         });
     }
 
+    // Data validation
+    const obj = req.body;
+    obj.id = req.params.id;
+    const {error} = schema.validate(obj);
+
+    if (error) {
+        res.status(500).send({
+            message: error.message
+        });
+
+        return;
+    }
+
     Schedule.updateById(
         req.params.id,
         new Schedule(req.body),
@@ -74,6 +108,17 @@ exports.update = (req, res) => {
 
 // Delete a Schedule with the specified id in the request
 exports.delete = (req, res) => {
+    // Data validation
+    const {error} = schema.validate({ id: req.params.id });
+
+    if (error) {
+        res.status(500).send({
+            message: error.message
+        });
+
+        return;
+    }
+
     Schedule.remove(req.params.id, (err, data) => {
         if (err) {
             if (err.kind === "not_found") {

@@ -1,4 +1,13 @@
 const Ticket = require("../model/ticket");
+const Joi = require("joi");
+
+// Validation schema
+const schema = Joi.object({
+    id: Joi.number().integer().min(1),
+    scheduleId: Joi.number().integer().min(1).required(),
+    seatNum: Joi.number().integer().min(1).max(10000).required(),
+    userId: Joi.number().integer().min(1).required()
+});
 
 // Create and Save a new Ticket
 exports.create = (req, res) => {
@@ -7,6 +16,17 @@ exports.create = (req, res) => {
         res.status(400).send({
             message: "Content can not be empty!"
         });
+    }
+
+    // Data validation
+    const {error} = schema.validate(req.body);
+
+    if (error) {
+        res.status(500).send({
+            message: error.message
+        });
+
+        return;
     }
 
     // Create a Ticket
@@ -50,6 +70,19 @@ exports.update = (req, res) => {
         });
     }
 
+    // Data validation
+    const obj = req.body;
+    obj.id = req.params.id;
+    const {error} = schema.validate(obj);
+
+    if (error) {
+        res.status(500).send({
+            message: error.message
+        });
+
+        return;
+    }
+
     Ticket.updateById(
         req.params.id,
         new Ticket(req.body),
@@ -73,6 +106,17 @@ exports.update = (req, res) => {
 
 // Delete a Ticket with the specified id in the request
 exports.delete = (req, res) => {
+    // Data validation
+    const {error} = schema.validate({ id: req.params.id });
+
+    if (error) {
+        res.status(500).send({
+            message: error.message
+        });
+
+        return;
+    }
+
     Ticket.remove(req.params.id, (err, data) => {
         if (err) {
             if (err.kind === "not_found") {
