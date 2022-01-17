@@ -19,8 +19,29 @@ const ticketIdSchema = Joi.object({
     userId: Joi.number().integer().min(1).required()
 });
 
+function checkSecurity(req, roles) {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    if (token == null) return false;
+
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    //console.log(JSON.parse(jsonPayload));
+    return roles.includes(JSON.parse(jsonPayload).role);
+}
+
 // Create and Save a new Ticket
 exports.create = (req, res) => {
+    // check security
+    security = checkSecurity(req, ["admin", "moderator"]);
+
+    if (!security)
+        res.status(401).send({ message: "You are not authorized!" });
+
     // Validate request
     if (!req.body) {
         res.status(400).send({
@@ -60,6 +81,12 @@ exports.create = (req, res) => {
 
 // Retrieve all Tickets from the database
 exports.findAll = (req, res) => {
+    // check security
+    security = checkSecurity(req, ["admin", "moderator"]);
+
+    if (!security)
+        res.status(401).send({ message: "You are not authorized!" });
+
     Ticket.getAll((err, data) => {
         if (err)
             res.status(500).send({
@@ -73,6 +100,12 @@ exports.findAll = (req, res) => {
 
 // Update a Ticket identified by the id in the request
 exports.update = (req, res) => {
+    // check security
+    security = checkSecurity(req, ["admin", "moderator"]);
+
+    if (!security)
+        res.status(401).send({ message: "You are not authorized!" });
+
     // Validate Request
     if (!req.body) {
         res.status(400).send({
@@ -116,6 +149,12 @@ exports.update = (req, res) => {
 
 // Delete a Ticket with the specified id in the request
 exports.delete = (req, res) => {
+    // check security
+    security = checkSecurity(req, ["admin", "moderator"]);
+
+    if (!security)
+        res.status(401).send({ message: "You are not authorized!" });
+
     // Data validation
     const {error} = idSchema.validate({ id: req.params.id });
 

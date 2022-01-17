@@ -20,6 +20,35 @@ User.create = (newUser, result) => {
     });
 };
 
+User.getByUser = (user, result) => {
+    sql.query(`SELECT * FROM user WHERE email LIKE '${user.email}' AND password LIKE '${user.password}'`, (err, res) => {
+        if (err) {
+            console.log("Error occurred!");
+            result(err, null);
+            returnl
+        }
+
+        if (res.length) {
+            console.log("User found: ", {
+                id: res[0].id,
+                role: res[0].role,
+                name: res[0].name,
+                email: res[0].email
+            });
+
+            result(null, {
+                role: res[0].role,
+                email: res[0].email,
+                password: res[0].password
+            });
+
+            return;
+        }
+
+        result({ kind: "not_found" }, null);
+    });
+}
+
 User.findById = (id, result) => {
     sql.query(`SELECT * FROM user WHERE id = ${id}`, (err, res) => {
         if (err) {
@@ -49,7 +78,7 @@ User.getAll = (result) => {
             return;
         }
 
-        console.log("user: ", res);
+        //console.log("user: ", res);
         result(null, res);
     });
 };

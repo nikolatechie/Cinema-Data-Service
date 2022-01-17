@@ -5,6 +5,9 @@ module.exports = app => {
     // Create a new User
     router.post("/", user.create);
 
+    // Check if exists by given email and password
+    router.post("/login", user.getByUser);
+
     // Read all users
     router.get("/", user.findAll);
 
