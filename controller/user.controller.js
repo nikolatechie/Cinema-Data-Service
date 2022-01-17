@@ -9,8 +9,19 @@ const Joi = require("joi");
 */
 const rolePattern = "moderator"; // dodati klijenta za ispit
 
-// Validation schema
-const schema = Joi.object({
+// Validation schemas
+const userSchema = Joi.object({
+    role: Joi.string().regex(RegExp(rolePattern)).required(),
+    name: Joi.string().required(),
+    email: Joi.string().required(),
+    password: Joi.string().required()
+});
+
+const idSchema = Joi.object({
+    id: Joi.number().integer().min(1)
+});
+
+const userIdSchema = Joi.object({
     id: Joi.number().integer().min(1),
     role: Joi.string().regex(RegExp(rolePattern)).required(),
     name: Joi.string().required(),
@@ -28,7 +39,7 @@ exports.create = (req, res) => {
     }
 
     // Data validation
-    const {error} = schema.validate(req.body);
+    const {error} = userSchema.validate(req.body);
 
     if (error) {
         res.status(500).send({
@@ -83,7 +94,7 @@ exports.update = (req, res) => {
     // Data validation
     const obj = req.body;
     obj.id = req.params.id;
-    const {error} = schema.validate(obj);
+    const {error} = userIdSchema.validate(obj);
 
     if (error) {
         res.status(500).send({
@@ -117,7 +128,7 @@ exports.update = (req, res) => {
 // Delete a User with the specified id in the request
 exports.delete = (req, res) => {
     // Data validation
-    const {error} = schema.validate({ id: req.params.id });
+    const {error} = idSchema.validate({ id: req.params.id });
 
     if (error) {
         res.status(500).send({

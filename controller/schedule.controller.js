@@ -1,8 +1,19 @@
 const Schedule = require("../model/schedule");
 const Joi = require("joi");
 
-// Validation schema
-const schema = Joi.object({
+// Validation schemas
+const scheduleSchema = Joi.object({
+    movieId: Joi.number().integer().min(1).required(),
+    dateTime: Joi.date().min("now").required(),
+    hallId: Joi.number().integer().min(1).required(),
+    price: Joi.number().min(0.0).required()
+});
+
+const idSchema = Joi.object({
+    id: Joi.number().integer().min(1)
+});
+
+const scheduleIdSchema = Joi.object({
     id: Joi.number().integer().min(1),
     movieId: Joi.number().integer().min(1).required(),
     dateTime: Joi.date().min("now").required(),
@@ -20,7 +31,7 @@ exports.create = (req, res) => {
     }
 
     // Data validation
-    const {error} = schema.validate(req.body);
+    const {error} = scheduleSchema.validate(req.body);
 
     if (error) {
         res.status(500).send({
@@ -75,7 +86,7 @@ exports.update = (req, res) => {
     // Data validation
     const obj = req.body;
     obj.id = req.params.id;
-    const {error} = schema.validate(obj);
+    const {error} = scheduleIdSchema.validate(obj);
 
     if (error) {
         res.status(500).send({
@@ -109,7 +120,7 @@ exports.update = (req, res) => {
 // Delete a Schedule with the specified id in the request
 exports.delete = (req, res) => {
     // Data validation
-    const {error} = schema.validate({ id: req.params.id });
+    const {error} = idSchema.validate({ id: req.params.id });
 
     if (error) {
         res.status(500).send({

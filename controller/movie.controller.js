@@ -1,8 +1,19 @@
 const Movie = require("../model/movie");
 const Joi = require("joi");
 
-// Validation schema
-const schema = Joi.object({
+// Validation schemas
+const movieSchema = Joi.object({
+    title: Joi.string().required(),
+    year: Joi.number().integer().min(1800).max(2023).required(),
+    genre: Joi.string().required(),
+    rating: Joi.number().min(0.0).max(5.0).required()
+});
+
+const idSchema = Joi.object({
+    id: Joi.number().integer().min(1)
+});
+
+const movieIdSchema = Joi.object({
     id: Joi.number().integer().min(1),
     title: Joi.string().required(),
     year: Joi.number().integer().min(1800).max(2023).required(),
@@ -20,7 +31,7 @@ exports.create = (req, res) => {
     }
 
     // Data validation
-    const {error} = schema.validate(req.body);
+    const {error} = movieSchema.validate(req.body);
 
     if (error) {
         res.status(500).send({
@@ -77,7 +88,7 @@ exports.update = (req, res) => {
     // Data validation
     const obj = req.body;
     obj.id = req.params.id;
-    const {error} = schema.validate(obj);
+    const {error} = movieIdSchema.validate(obj);
 
     if (error) {
         res.status(500).send({
@@ -111,7 +122,7 @@ exports.update = (req, res) => {
 // Delete a Movie with the specified id in the request
 exports.delete = (req, res) => {
     // Data validation
-    const {error} = schema.validate({ id: req.params.id });
+    const {error} = idSchema.validate({ id: req.params.id });
 
     if (error) {
         res.status(500).send({

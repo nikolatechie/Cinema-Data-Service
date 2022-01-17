@@ -1,8 +1,17 @@
 const Hall = require("../model/hall");
 const Joi = require("joi");
 
-// Validation schema
-const schema = Joi.object({
+// Validation schemas
+const hallSchema = Joi.object({
+    floor: Joi.number().min(1).max(1000).required(),
+    capacity: Joi.number().min(0).max(10000).required()
+});
+
+const idSchema = Joi.object({
+    id: Joi.number().integer().min(1)
+});
+
+const hallIdSchema = Joi.object({
     id: Joi.number().integer().min(1),
     floor: Joi.number().min(1).max(1000).required(),
     capacity: Joi.number().min(0).max(10000).required()
@@ -18,7 +27,7 @@ exports.create = (req, res) => {
     }
 
     // Data validation
-    const {error} = schema.validate(req.body);
+    const {error} = hallSchema.validate(req.body);
 
     if (error) {
         res.status(500).send({
@@ -70,8 +79,7 @@ exports.update = (req, res) => {
     // Data validation
     const obj = req.body;
     obj.id = req.params.id;
-
-    const {error} = schema.validate(obj);
+    const {error} = hallIdSchema.validate(obj);
 
     if (error) {
         res.status(500).send({
@@ -105,7 +113,7 @@ exports.update = (req, res) => {
 // Delete a Hall with the specified id in the request
 exports.delete = (req, res) => {
     // Data validation
-    const {error} = schema.validate({ id: req.params.id});
+    const {error} = idSchema.validate({ id: req.params.id});
 
     if (error) {
         res.status(500).send({
