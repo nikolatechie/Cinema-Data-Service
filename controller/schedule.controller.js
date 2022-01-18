@@ -25,7 +25,7 @@ const scheduleIdSchema = Joi.object({
 // Create and Save a new Schedule
 exports.create = (req, res) => {
     // check security
-    security = roleAuth.checkSecurity(req, ["admin", "moderator"]);
+    let security = roleAuth.checkSecurity(req, ["admin", "moderator"]);
 
     if (!security)
         res.status(401).send({ message: "You are not authorized!" });
@@ -71,7 +71,7 @@ exports.create = (req, res) => {
 // Retrieve all Schedules from the database
 exports.findAll = (req, res) => {
     // check security
-    security = roleAuth.checkSecurity(req, ["admin", "moderator"]);
+    let security = roleAuth.checkSecurity(req, ["admin", "moderator"]);
 
     if (!security)
         res.status(401).send({ message: "You are not authorized!" });
@@ -90,7 +90,7 @@ exports.findAll = (req, res) => {
 // Update a Schedule identified by the id in the request
 exports.update = (req, res) => {
     // check security
-    security = roleAuth.checkSecurity(req, ["admin", "moderator"]);
+    let security = roleAuth.checkSecurity(req, ["admin", "moderator"]);
 
     if (!security)
         res.status(401).send({ message: "You are not authorized!" });
@@ -139,7 +139,7 @@ exports.update = (req, res) => {
 // Delete a Schedule with the specified id in the request
 exports.delete = (req, res) => {
     // check security
-    security = roleAuth.checkSecurity(req, ["admin", "moderator"]);
+    let security = roleAuth.checkSecurity(req, ["admin", "moderator"]);
 
     if (!security)
         res.status(401).send({ message: "You are not authorized!" });

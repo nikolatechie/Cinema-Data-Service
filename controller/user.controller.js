@@ -39,7 +39,7 @@ const loginSchema = Joi.object({
 // Create and Save a new User
 exports.create = (req, res) => {
     // check security
-    security = roleAuth.checkSecurity(req, ["admin"]);
+    let security = roleAuth.checkSecurity(req, ["admin"]);
 
     if (!security)
         res.status(401).send({ message: "You are not authorized!" });
@@ -104,7 +104,7 @@ exports.getByUser = (req, res) => {
 // Retrieve all Users from the database
 exports.findAll = (req, res) => {
     // check security
-    security = roleAuth.checkSecurity(req, ["admin"]);
+    let security = roleAuth.checkSecurity(req, ["admin"]);
 
     if (!security)
         res.status(401).send({ message: "You are not authorized!" });
@@ -123,7 +123,7 @@ exports.findAll = (req, res) => {
 // Update a User identified by the id in the request
 exports.update = (req, res) => {
     // check security
-    security = roleAuth.checkSecurity(req, ["admin"]);
+    let security = roleAuth.checkSecurity(req, ["admin"]);
 
     if (!security)
         res.status(401).send({ message: "You are not authorized!" });
@@ -172,7 +172,7 @@ exports.update = (req, res) => {
 // Delete a User with the specified id in the request
 exports.delete = (req, res) => {
     // check security
-    security = roleAuth.checkSecurity(req, ["admin"]);
+    let security = roleAuth.checkSecurity(req, ["admin"]);
 
     if (!security)
         res.status(401).send({ message: "You are not authorized!" });
