@@ -1,5 +1,6 @@
 const Movie = require("../model/movie");
 const Joi = require("joi");
+const roleAuth = require("../security/role.authorization");
 
 // Validation schemas
 const movieSchema = Joi.object({
@@ -21,25 +22,10 @@ const movieIdSchema = Joi.object({
     rating: Joi.number().min(0.0).max(5.0).required()
 });
 
-function checkSecurity(req, roles) {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
-    if (token == null) return false;
-
-    var base64Url = token.split('.')[1];
-    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-
-    //console.log(JSON.parse(jsonPayload));
-    return roles.includes(JSON.parse(jsonPayload).role);
-}
-
 // Create and Save a new Movie
 exports.create = (req, res) => {
     // check security
-    security = checkSecurity(req, ["admin", "moderator"]);
+    security = roleAuth.checkSecurity(req, ["admin", "moderator"]);
 
     if (!security)
         res.status(401).send({ message: "You are not authorized!" });
@@ -85,7 +71,7 @@ exports.create = (req, res) => {
 // Retrieve all Movies from the database (with condition).
 exports.findAll = (req, res) => {
     // check security
-    security = checkSecurity(req, ["admin", "moderator"]);
+    security = roleAuth.checkSecurity(req, ["admin", "moderator"]);
 
     if (!security)
         res.status(401).send({ message: "You are not authorized!" });
@@ -106,7 +92,7 @@ exports.findAll = (req, res) => {
 // Update a Movie identified by the id in the request
 exports.update = (req, res) => {
     // check security
-    security = checkSecurity(req, ["admin", "moderator"]);
+    security = roleAuth.checkSecurity(req, ["admin", "moderator"]);
 
     if (!security)
         res.status(401).send({ message: "You are not authorized!" });
@@ -155,7 +141,7 @@ exports.update = (req, res) => {
 // Delete a Movie with the specified id in the request
 exports.delete = (req, res) => {
     // check security
-    security = checkSecurity(req, ["admin", "moderator"]);
+    security = roleAuth.checkSecurity(req, ["admin", "moderator"]);
 
     if (!security)
         res.status(401).send({ message: "You are not authorized!" });

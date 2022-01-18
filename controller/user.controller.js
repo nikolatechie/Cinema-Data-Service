@@ -1,6 +1,7 @@
 const User = require("../model/user");
 const Joi = require("joi");
 const jwt = require("jsonwebtoken");
+const roleAuth = require("../security/role.authorization");
 
 /*
     ROLES:
@@ -35,25 +36,10 @@ const loginSchema = Joi.object({
     password: Joi.string().required()
 });
 
-function checkSecurity(req, roles) {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
-    if (token == null) return false;
-
-    var base64Url = token.split('.')[1];
-    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-
-    //console.log(JSON.parse(jsonPayload));
-    return roles.includes(JSON.parse(jsonPayload).role);
-}
-
 // Create and Save a new User
 exports.create = (req, res) => {
     // check security
-    security = checkSecurity(req, ["admin"]);
+    security = roleAuth.checkSecurity(req, ["admin"]);
 
     if (!security)
         res.status(401).send({ message: "You are not authorized!" });
@@ -118,7 +104,7 @@ exports.getByUser = (req, res) => {
 // Retrieve all Users from the database
 exports.findAll = (req, res) => {
     // check security
-    security = checkSecurity(req, ["admin"]);
+    security = roleAuth.checkSecurity(req, ["admin"]);
 
     if (!security)
         res.status(401).send({ message: "You are not authorized!" });
@@ -137,7 +123,7 @@ exports.findAll = (req, res) => {
 // Update a User identified by the id in the request
 exports.update = (req, res) => {
     // check security
-    security = checkSecurity(req, ["admin"]);
+    security = roleAuth.checkSecurity(req, ["admin"]);
 
     if (!security)
         res.status(401).send({ message: "You are not authorized!" });
@@ -186,7 +172,7 @@ exports.update = (req, res) => {
 // Delete a User with the specified id in the request
 exports.delete = (req, res) => {
     // check security
-    security = checkSecurity(req, ["admin"]);
+    security = roleAuth.checkSecurity(req, ["admin"]);
 
     if (!security)
         res.status(401).send({ message: "You are not authorized!" });
