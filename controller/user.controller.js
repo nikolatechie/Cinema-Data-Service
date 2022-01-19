@@ -43,43 +43,44 @@ exports.create = (req, res) => {
 
     if (!security)
         res.status(401).send({ message: "You are not authorized!" });
-
-    // Validate request
-    if (!req.body) {
-        res.status(400).send({
-            message: "Content can not be empty!"
-        });
-    }
-
-    // Data validation
-    const {error} = userSchema.validate(req.body);
-
-    if (error) {
-        res.status(500).send({
-            message: error.message
-        });
-
-        return;
-    }
-
-    // Create a User
-    const user = new User({
-        role: req.body.role,
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password
-    });
-
-    // Save User in the database
-    User.create(user, (err, data) => {
-        if (err)
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while creating the User."
+    else {
+        // Validate request
+        if (!req.body) {
+            res.status(400).send({
+                message: "Content can not be empty!"
             });
-        else
-            res.send(data);
-    });
+        }
+
+        // Data validation
+        const {error} = userSchema.validate(req.body);
+
+        if (error) {
+            res.status(500).send({
+                message: error.message
+            });
+
+            return;
+        }
+
+        // Create a User
+        const user = new User({
+            role: req.body.role,
+            name: req.body.name,
+            email: req.body.email,
+            password: req.body.password
+        });
+
+        // Save User in the database
+        User.create(user, (err, data) => {
+            if (err)
+                res.status(500).send({
+                    message:
+                        err.message || "Some error occurred while creating the User."
+                });
+            else
+                res.send(data);
+        });
+    }
 };
 
 // Check if user exists by given parameters
@@ -89,16 +90,17 @@ exports.getByUser = (req, res) => {
 
     if (error)
         res.status(500).send({ message: "User parameters invalid!" });
-
-    User.getByUser(req.body, (err, data) => {
-        if (err)
-            res.status(500).send({message: err.message});
-        else {
-            res.send({
-                token: jwt.sign(data, "myKey")
-            })
-        }
-    });
+    else {
+        User.getByUser(req.body, (err, data) => {
+            if (err)
+                res.status(500).send({message: err.message});
+            else {
+                res.send({
+                    token: jwt.sign(data, "myKey")
+                })
+            }
+        });
+    }
 }
 
 // Retrieve all Users from the database
@@ -108,16 +110,17 @@ exports.findAll = (req, res) => {
 
     if (!security)
         res.status(401).send({ message: "You are not authorized!" });
-
-    User.getAll((err, data) => {
-        if (err)
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while retrieving users."
-            });
-        else
-            res.send(data);
-    });
+    else {
+        User.getAll((err, data) => {
+            if (err)
+                res.status(500).send({
+                    message:
+                        err.message || "Some error occurred while retrieving users."
+                });
+            else
+                res.send(data);
+        });
+    }
 };
 
 // Update a User identified by the id in the request
@@ -127,46 +130,45 @@ exports.update = (req, res) => {
 
     if (!security)
         res.status(401).send({ message: "You are not authorized!" });
-
-    // Validate Request
-    if (!req.body) {
-        res.status(400).send({
-            message: "Content can not be empty!"
-        });
-    }
-
-    // Data validation
-    const obj = req.body;
-    obj.id = req.params.id;
-    const {error} = userIdSchema.validate(obj);
-
-    if (error) {
-        res.status(500).send({
-            message: error.message
-        });
-
-        return;
-    }
-
-    User.updateById(
-        req.params.id,
-        new User(req.body),
-        (err, data) => {
-            if (err) {
-                if (err.kind === "not_found") {
-                    res.status(404).send({
-                        message: `Not found User with id ${req.params.id}.`
-                    });
-                }
-                else {
-                    res.status(500).send({
-                        message: "Error updating User with id " + req.params.id
-                    });
-                }
-            }
-            else res.send(data);
+    else {
+        // Validate Request
+        if (!req.body) {
+            res.status(400).send({
+                message: "Content can not be empty!"
+            });
         }
-    );
+
+        // Data validation
+        const obj = req.body;
+        obj.id = req.params.id;
+        const {error} = userIdSchema.validate(obj);
+
+        if (error) {
+            res.status(500).send({
+                message: error.message
+            });
+
+            return;
+        }
+
+        User.updateById(
+            req.params.id,
+            new User(req.body),
+            (err, data) => {
+                if (err) {
+                    if (err.kind === "not_found") {
+                        res.status(404).send({
+                            message: `Not found User with id ${req.params.id}.`
+                        });
+                    } else {
+                        res.status(500).send({
+                            message: "Error updating User with id " + req.params.id
+                        });
+                    }
+                } else res.send(data);
+            }
+        );
+    }
 };
 
 // Delete a User with the specified id in the request
@@ -176,31 +178,30 @@ exports.delete = (req, res) => {
 
     if (!security)
         res.status(401).send({ message: "You are not authorized!" });
+    else {
+        // Data validation
+        const {error} = idSchema.validate({id: req.params.id});
 
-    // Data validation
-    const {error} = idSchema.validate({ id: req.params.id });
+        if (error) {
+            res.status(500).send({
+                message: error.message
+            });
 
-    if (error) {
-        res.status(500).send({
-            message: error.message
-        });
-
-        return;
-    }
-
-    User.remove(req.params.id, (err, data) => {
-        if (err) {
-            if (err.kind === "not_found") {
-                res.status(404).send({
-                    message: `Not found User with id ${req.params.id}.`
-                });
-            }
-            else {
-                res.status(500).send({
-                    message: "Could not delete User with id " + req.params.id
-                });
-            }
+            return;
         }
-        else res.send({ message: `User was deleted successfully!` });
-    });
+
+        User.remove(req.params.id, (err, data) => {
+            if (err) {
+                if (err.kind === "not_found") {
+                    res.status(404).send({
+                        message: `Not found User with id ${req.params.id}.`
+                    });
+                } else {
+                    res.status(500).send({
+                        message: "Could not delete User with id " + req.params.id
+                    });
+                }
+            } else res.send({message: `User was deleted successfully!`});
+        });
+    }
 };
