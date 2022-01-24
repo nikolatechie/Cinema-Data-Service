@@ -9,7 +9,7 @@ const roleAuth = require("../security/role.authorization");
     (2) Moderators create, update and delete movies, schedules...
     (3) Clients can buy tickets for movies
 */
-const rolePattern = "moderator"; // dodati klijenta za ispit
+const rolePattern = "admin|moderator|client";
 
 // Validation schemas
 const userSchema = Joi.object({
@@ -96,7 +96,7 @@ exports.getByUser = (req, res) => {
                 res.status(500).send({message: err.message});
             else {
                 res.send({
-                    token: jwt.sign(data, "myKey")
+                    token: jwt.sign(data, "key")
                 })
             }
         });
@@ -153,7 +153,7 @@ exports.update = (req, res) => {
 
         User.updateById(
             req.params.id,
-            new User(req.body),
+            new User(obj),
             (err, data) => {
                 if (err) {
                     if (err.kind === "not_found") {

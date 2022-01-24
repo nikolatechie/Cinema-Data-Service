@@ -56,7 +56,7 @@ Schedule.getAll = (result) => {
 
 Schedule.updateById = (id, schedule, result) => {
     sql.query(
-        "UPDATE schedule SET movie_id = ?, date_time = ?, hall_id = ?, price = ? WHERE id = ?",
+        "UPDATE schedule SET movieId = ?, dateTime = ?, hallId = ?, price = ? WHERE id = ?",
         [schedule.movieId, schedule.dateTime, schedule.hallId, schedule.price, id],
         (err, res) => {
             if (err) {

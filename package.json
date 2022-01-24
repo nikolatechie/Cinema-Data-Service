@@ -15,6 +15,7 @@
     "mysql": "^2.18.1"
   },
   "devDependencies": {
+    "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "joi": "^17.5.0",
     "jsonwebtoken": "^8.5.1"

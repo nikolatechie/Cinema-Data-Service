@@ -1,4 +1,5 @@
 const sql = require("./db.js");
+const bcrypt = require('bcrypt');
 
 const User = function(user) {
     this.role = user.role;
@@ -7,7 +8,15 @@ const User = function(user) {
     this.password = user.password;
 };
 
-User.create = (newUser, result) => {
+User.create = async (newUser, result) => {
+    try {
+        newUser.password = await bcrypt.hash(newUser.password, 10);
+    }
+    catch {
+        console.log('Error!');
+        result('Error!', null);
+    }
+
     sql.query("INSERT INTO user SET ?", newUser, (err, res) => {
         if (err) {
             console.log("error: ", err);
@@ -20,15 +29,15 @@ User.create = (newUser, result) => {
     });
 };
 
-User.getByUser = (user, result) => {
-    sql.query(`SELECT * FROM user WHERE email LIKE '${user.email}' AND password LIKE '${user.password}'`, (err, res) => {
+User.getByUser = async (user, result) => {
+    sql.query(`SELECT * FROM user WHERE email = '${user.email}'`, async (err, res) => {
         if (err) {
             console.log("Error occurred!");
             result(err, null);
-            returnl
+            return;
         }
 
-        if (res.length) {
+        if (res.length && await bcrypt.compare(user.password, res[0].password)) {
             console.log("User found: ", {
                 id: res[0].id,
                 role: res[0].role,
@@ -83,7 +92,15 @@ User.getAll = (result) => {
     });
 };
 
-User.updateById = (id, user, result) => {
+User.updateById = async (id, user, result) => {
+    try {
+        user.password = await bcrypt.hash(user.password, 10);
+    }
+    catch {
+        console.log('Error!');
+        result('Error!', null);
+    }
+
     sql.query(
         "UPDATE user SET role = ?, name = ?, email = ?, password = ? WHERE id = ?",
         [user.role, user.name, user.email, user.password, id],
