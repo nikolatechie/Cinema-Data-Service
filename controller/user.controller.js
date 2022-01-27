@@ -9,7 +9,7 @@ const roleAuth = require("../security/role.authorization");
     (2) Moderators create, update and delete movies, schedules...
     (3) Clients can buy tickets for movies
 */
-const rolePattern = "admin|moderator|client";
+const rolePattern = "client";
 
 // Validation schemas
 const userSchema = Joi.object({
@@ -38,49 +38,42 @@ const loginSchema = Joi.object({
 
 // Create and Save a new User
 exports.create = (req, res) => {
-    // check security
-    let security = roleAuth.checkSecurity(req, ["admin"]);
-
-    if (!security)
-        res.status(401).send({ message: "You are not authorized!" });
-    else {
-        // Validate request
-        if (!req.body) {
-            res.status(400).send({
-                message: "Content can not be empty!"
-            });
-        }
-
-        // Data validation
-        const {error} = userSchema.validate(req.body);
-
-        if (error) {
-            res.status(500).send({
-                message: error.message
-            });
-
-            return;
-        }
-
-        // Create a User
-        const user = new User({
-            role: req.body.role,
-            name: req.body.name,
-            email: req.body.email,
-            password: req.body.password
-        });
-
-        // Save User in the database
-        User.create(user, (err, data) => {
-            if (err)
-                res.status(500).send({
-                    message:
-                        err.message || "Some error occurred while creating the User."
-                });
-            else
-                res.send(data);
+    // Validate request
+    if (!req.body) {
+        res.status(400).send({
+            message: "Content can not be empty!"
         });
     }
+
+    // Data validation
+    const {error} = userSchema.validate(req.body);
+
+    if (error) {
+        res.status(500).send({
+            message: error.message
+        });
+
+        return;
+    }
+
+    // Create a User
+    const user = new User({
+        role: req.body.role,
+        name: req.body.name,
+        email: req.body.email,
+        password: req.body.password
+    });
+
+    // Save User in the database
+    User.create(user, (err, data) => {
+        if (err)
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while creating the User."
+            });
+        else
+            res.send(data);
+    });
 };
 
 // Check if user exists by given parameters
