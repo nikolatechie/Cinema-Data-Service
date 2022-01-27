@@ -5,6 +5,9 @@ module.exports = app => {
     // Create a new Movie
     router.post("/", movie.create);
 
+    // Get movie with the given id
+    router.get("/:id", movie.findById);
+
     // Read all movies
     router.get("/", movie.findAll);
 

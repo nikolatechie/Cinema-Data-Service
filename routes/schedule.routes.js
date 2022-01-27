@@ -5,7 +5,7 @@ module.exports = app => {
     // Create a new Schedule
     router.post("/", schedule.create);
 
-    // Read all halls
+    // Read all schedules
     router.get("/", schedule.findAll);
 
     // Update a Schedule with id

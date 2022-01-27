@@ -71,22 +71,15 @@ exports.create = (req, res) => {
 
 // Retrieve all Schedules from the database
 exports.findAll = (req, res) => {
-    // check security
-    let security = roleAuth.checkSecurity(req, ["admin", "moderator"]);
-
-    if (!security)
-        res.status(401).send({ message: "You are not authorized!" });
-    else {
-        Schedule.getAll((err, data) => {
-            if (err)
-                res.status(500).send({
-                    message:
-                        err.message || "Some error occurred while retrieving schedules."
-                });
-            else
-                res.send(data);
-        });
-    }
+    Schedule.getAll((err, data) => {
+        if (err)
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving schedules."
+            });
+        else
+            res.send(data);
+    });
 };
 
 // Update a Schedule identified by the id in the request

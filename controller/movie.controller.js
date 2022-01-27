@@ -70,6 +70,17 @@ exports.create = (req, res) => {
     }
 };
 
+// Return movie with the given ID
+exports.findById = (req, res) => {
+    Movie.findById(req.params.id, (err, data) => {
+        if (err)
+            res.status(500).second({
+                message: err.message || "No movie found!"
+            });
+        else res.send(data);
+    })
+}
+
 // Retrieve all Movies from the database (with condition).
 exports.findAll = (req, res) => {
     // check security

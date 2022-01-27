@@ -23,7 +23,7 @@ const ticketIdSchema = Joi.object({
 // Create and Save a new Ticket
 exports.create = (req, res) => {
     // check security
-    let security = roleAuth.checkSecurity(req, ["admin", "moderator"]);
+    let security = roleAuth.checkSecurity(req, ["admin", "moderator", "client"]);
 
     if (!security)
         res.status(401).send({ message: "You are not authorized!" });

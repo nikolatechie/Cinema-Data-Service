@@ -46,6 +46,7 @@ User.getByUser = async (user, result) => {
             });
 
             result(null, {
+                id: res[0].id,
                 role: res[0].role,
                 email: res[0].email,
                 password: res[0].password
