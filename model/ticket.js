@@ -38,6 +38,20 @@ Ticket.findById = (id, result) => {
     });
 };
 
+Ticket.findByUser = (userId, result) => {
+    sql.query(`SELECT scheduleId FROM ticket WHERE userId = ${userId}`, (err, res) => {
+        if (err) {
+            console.error('Error ' + err);
+            result(err, null);
+            return;
+        }
+
+        console.log(res);
+        result(null, res);
+        return;
+    })
+}
+
 Ticket.getAll = (result) => {
     let query = "SELECT * FROM ticket";
 
