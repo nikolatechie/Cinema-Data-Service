@@ -5,8 +5,11 @@ module.exports = app => {
     // Create a new Ticket
     router.post("/", ticket.create);
 
-    // Get tickets for specific user
+    // Get tickets' scheduleId for specific user
     router.get("/:id", ticket.findByUser);
+
+    // Get all tickets for specific user
+    router.get("/visits/:id", ticket.findByUserId);
 
     // Read all tickets
     router.get("/", ticket.findAll);

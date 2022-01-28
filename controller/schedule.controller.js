@@ -69,6 +69,16 @@ exports.create = (req, res) => {
     }
 };
 
+exports.getById = (req, res) => {
+    Schedule.findById(req.params.id, (err, data) => {
+        if (err)
+            res.status(500).send({
+                message: err.message
+            })
+        else res.send(data);
+    })
+}
+
 // Retrieve all Schedules from the database
 exports.findAll = (req, res) => {
     Schedule.getAll((err, data) => {

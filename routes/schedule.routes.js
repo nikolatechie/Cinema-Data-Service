@@ -8,6 +8,9 @@ module.exports = app => {
     // Read all schedules
     router.get("/", schedule.findAll);
 
+    // Get schedule with the given id
+    router.get("/:id", schedule.getById);
+
     // Update a Schedule with id
     router.put("/:id", schedule.update);
 

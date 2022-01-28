@@ -38,6 +38,18 @@ Ticket.findById = (id, result) => {
     });
 };
 
+Ticket.findByUserId = (userId, result) => {
+    sql.query(`SELECT scheduleId, seatNum FROM ticket WHERE userId = ${userId}`, (err, res) => {
+        if (err) {
+            console.error('Error ' + err);
+            result(err, null);
+            return;
+        }
+
+        result(null, res);
+    })
+}
+
 Ticket.findByUser = (userId, result) => {
     sql.query(`SELECT scheduleId FROM ticket WHERE userId = ${userId}`, (err, res) => {
         if (err) {

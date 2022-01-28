@@ -66,6 +66,23 @@ exports.create = (req, res) => {
     }
 };
 
+exports.findByUserId = (req, res) => {
+    // check security
+    let security = roleAuth.checkSecurity(req, ['admin', 'moderator', 'client']);
+
+    if (!security)
+        res.status(403).send({ message: 'You are not authorized!' });
+    else {
+        Ticket.findByUserId(req.params.id,(err, data) => {
+            if (err)
+                res.status(500).second({
+                    message: err.message || 'Error while retrieving tickets...'
+                })
+            else res.send(data);
+        })
+    }
+}
+
 // Retrieve tickets for specific user
 exports.findByUser = (req, res) => {
     // check security
