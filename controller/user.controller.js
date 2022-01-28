@@ -116,6 +116,17 @@ exports.findAll = (req, res) => {
     }
 };
 
+// Update user with the given email
+exports.updateByEmail = (req, res) => {
+    User.updateByEmail(req.body, (err, data) => {
+        if (err)
+            res.status(500).send({
+                message: err.message
+            })
+        else res.send(data);
+    })
+}
+
 // Update a User identified by the id in the request
 exports.update = (req, res) => {
     // check security

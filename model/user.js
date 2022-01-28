@@ -93,6 +93,33 @@ User.getAll = (result) => {
     });
 };
 
+User.updateByEmail = async (user, result) => {
+    if (user.name != null && user.name !== '') {
+        sql.query(`UPDATE user SET name = ? WHERE email = ?`,
+            [user.name, user.email]);
+    }
+
+    if (user.password != null && user.password !== '') {
+        try {
+            user.password = await bcrypt.hash(user.password, 10);
+        }
+        catch {
+            console.log('Error!');
+            result('Error!', null);
+        }
+
+        sql.query(`UPDATE user SET password = ? WHERE email = ?`,
+            [user.password, user.email]);
+    }
+
+    if (user.newEmail != null && user.newEmail !== '') {
+        sql.query(`UPDATE user SET email = ? WHERE email = ?`,
+            [user.newEmail, user.email]);
+    }
+
+    result(null, { message: "User info updated!" })
+}
+
 User.updateById = async (id, user, result) => {
     try {
         user.password = await bcrypt.hash(user.password, 10);

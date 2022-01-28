@@ -11,6 +11,9 @@ module.exports = app => {
     // Read all users
     router.get("/", user.findAll);
 
+    // Update user with given id
+    router.put("/", user.updateByEmail);
+
     // Update a User with id
     router.put("/:id", user.update);
 
